@@ -4,7 +4,6 @@ async function convert() {
         let to = document.getElementById("to").value;
         let amount = document.getElementById("amount").value;
 
-        // 🧠 Debug log
         console.log("Clicked:", from, to, amount);
 
         if (!from || !to || !amount) {
@@ -14,7 +13,7 @@ async function convert() {
         }
 
         let response = await fetch(
-            `https://currency-converter-oy1a.onrender.com/convert`
+            `http://127.0.0.1:5000/convert?from=${from}&to=${to}&amount=${amount}`
         );
 
         console.log("Response status:", response.status);
