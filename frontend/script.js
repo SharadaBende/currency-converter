@@ -14,7 +14,7 @@ async function convert() {
         }
 
         let response = await fetch(
-            `http://127.0.0.1:5000/convert?from=${from}&to=${to}&amount=${amount}`
+            `https://currency-converter-oy1a.onrender.com/convert`
         );
 
         console.log("Response status:", response.status);
