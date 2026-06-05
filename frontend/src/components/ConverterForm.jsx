@@ -32,9 +32,9 @@ export default function ConverterForm({ onConversion }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
-      <h1 className="text-2xl font-bold text-center text-blue-600 mb-6">Currency Converter</h1>
-      
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+  <h1 className="text-2xl font-bold text-center text-blue-600 dark:text-blue-400 mb-6">Currency Converter</h1>
+  
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>

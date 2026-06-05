@@ -13,8 +13,9 @@ export default function ConversionHistory({ refresh }) {
   if (history.length === 0) return null
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md mt-6">
-      <h2 className="text-xl font-bold text-gray-700 mb-4">Recent Conversions</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md mt-6">
+  <h2 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-4">Recent Conversions</h2>
+  
       <ul className="space-y-3">
         {history.map((item) => (
           <li key={item.id} className="flex justify-between items-center border-b pb-2">
