@@ -1,19 +1,8 @@
 import { useState } from "react"
 import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
+import { currencies } from "../utils/currencies"
 
-const currencies = [
-  { code: "USD", country: "US" },
-  { code: "EUR", country: "EU" },
-  { code: "GBP", country: "GB" },
-  { code: "INR", country: "IN" },
-  { code: "JPY", country: "JP" },
-  { code: "AUD", country: "AU" },
-  { code: "CAD", country: "CA" },
-  { code: "CHF", country: "CH" },
-  { code: "CNY", country: "CN" },
-  { code: "SGD", country: "SG" },
-]
 
 export default function MultiConverter({ dark }) {
   const [amount, setAmount] = useState("")
