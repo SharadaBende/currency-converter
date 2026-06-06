@@ -8,6 +8,7 @@ import Login from "./components/Login"
 import Signup from "./components/Signup"
 import Navbar from "./components/Navbar"
 import Dashboard from "./components/Dashboard"
+import FavoritePairs from "./components/FavoritePairs"
 
 function MainApp() {
   const { user, token } = useAuth()
@@ -20,6 +21,10 @@ function MainApp() {
     setRefresh(prev => prev + 1)
     setCurrencies({ from, to })
   }
+   
+  const handleSelectPair = (from, to) => {
+  setCurrencies({ from, to })
+}
 
   return (
     <div className={dark ? "dark" : ""}>
@@ -36,9 +41,10 @@ function MainApp() {
   </div>
   <div className="flex flex-col gap-6">
     <Dashboard dark={dark} />
+    <FavoritePairs onSelect={handleSelectPair} dark={dark} />
     <MultiConverter dark={dark} />
     <ConversionHistory refresh={refresh} dark={dark} />
-  </div>
+</div>
 </div>
             </>
           ) : (
