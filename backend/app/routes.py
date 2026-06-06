@@ -44,3 +44,19 @@ def get_history(db: Session = Depends(get_db)):
     return db.query(models.ConversionHistory).order_by(
         models.ConversionHistory.timestamp.desc()
     ).limit(10).all()
+
+
+@router.post("/convert-multi")
+async def convert_multi(request: schemas.ConversionRequest, db: Session = Depends(get_db)):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"https://open.er-api.com/v6/latest/{request.from_currency}",
+            timeout=10.0
+        )
+    
+    data = response.json()
+
+    if response.status_code != 200 or data.get("result") != "success":
+        raise HTTPException(status_code=400, detail="Could not fetch exchange rates")
+
+    return {"rates": data["rates"], "base": request.from_currency}

@@ -2,6 +2,7 @@ import { useState } from "react"
 import ConverterForm from "./components/ConverterForm"
 import ConversionHistory from "./components/ConversionHistory"
 import RateChart from "./components/RateChart"
+import MultiConverter from "./components/MultiConverter"
 
 export default function App() {
   const [refresh, setRefresh] = useState(0)
@@ -23,6 +24,7 @@ export default function App() {
         </button>
 
         <ConverterForm onConversion={handleConversion} dark={dark} />
+        <MultiConverter dark={dark} />
         <RateChart from_currency={currencies.from} to_currency={currencies.to} dark={dark} />
         <ConversionHistory refresh={refresh} dark={dark} />
       </div>
