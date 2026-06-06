@@ -7,6 +7,7 @@ import MultiConverter from "./components/MultiConverter"
 import Login from "./components/Login"
 import Signup from "./components/Signup"
 import Navbar from "./components/Navbar"
+import Dashboard from "./components/Dashboard"
 
 function MainApp() {
   const { user, token } = useAuth()
@@ -29,15 +30,16 @@ function MainApp() {
           {token ? (
             <>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-6">
-                  <ConverterForm onConversion={handleConversion} dark={dark} />
-                  <RateChart from_currency={currencies.from} to_currency={currencies.to} dark={dark} />
-                </div>
-                <div className="flex flex-col gap-6">
-                  <MultiConverter dark={dark} />
-                  <ConversionHistory refresh={refresh} dark={dark} />
-                </div>
-              </div>
+  <div className="flex flex-col gap-6">
+    <ConverterForm onConversion={handleConversion} dark={dark} />
+    <RateChart from_currency={currencies.from} to_currency={currencies.to} dark={dark} />
+  </div>
+  <div className="flex flex-col gap-6">
+    <Dashboard dark={dark} />
+    <MultiConverter dark={dark} />
+    <ConversionHistory refresh={refresh} dark={dark} />
+  </div>
+</div>
             </>
           ) : (
             <div className="flex flex-col items-center justify-center min-h-[80vh]">
