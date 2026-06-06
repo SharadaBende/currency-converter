@@ -1,7 +1,21 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
+import { getFlagUrl } from "../utils/flags"
 
-export default function ConversionHistory({ refresh }) {
+const currencies = [
+  { code: "USD", country: "US" },
+  { code: "EUR", country: "EU" },
+  { code: "GBP", country: "GB" },
+  { code: "INR", country: "IN" },
+  { code: "JPY", country: "JP" },
+  { code: "AUD", country: "AU" },
+  { code: "CAD", country: "CA" },
+  { code: "CHF", country: "CH" },
+  { code: "CNY", country: "CN" },
+  { code: "SGD", country: "SG" },
+]
+
+export default function ConversionHistory({ refresh, dark }) {
   const [history, setHistory] = useState([])
 
   useEffect(() => {
@@ -13,23 +27,32 @@ export default function ConversionHistory({ refresh }) {
   if (history.length === 0) return null
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md mt-6">
-  <h2 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-4">Recent Conversions</h2>
-  
+    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-8 w-full">
+      <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Recent Conversions</h2>
       <ul className="space-y-3">
         {history.map((item) => (
-          <li key={item.id} className="flex justify-between items-center border-b pb-2">
-            <div>
-              <p className="font-semibold text-gray-800">
-                {item.amount} {item.from_currency} → {item.converted_amount.toFixed(2)} {item.to_currency}
+          <li key={item.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-2xl px-4 py-3">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <img src={getFlagUrl(currencies.find(c => c.code === item.from_currency)?.country)}
+                  className="w-6 h-4 rounded-sm object-cover" />
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{item.from_currency}</span>
+              </div>
+              <span className="text-gray-400">→</span>
+              <div className="flex items-center gap-1">
+                <img src={getFlagUrl(currencies.find(c => c.code === item.to_currency)?.country)}
+                  className="w-6 h-4 rounded-sm object-cover" />
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">{item.to_currency}</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                {item.converted_amount.toFixed(2)}
               </p>
               <p className="text-xs text-gray-400">
-                {new Date(item.timestamp).toLocaleString()}
+                {new Date(item.timestamp).toLocaleDateString()}
               </p>
             </div>
-            <span className="text-sm text-blue-500 font-medium">
-              {item.rate.toFixed(4)}
-            </span>
           </li>
         ))}
       </ul>
