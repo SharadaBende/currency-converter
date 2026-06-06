@@ -3,7 +3,6 @@ import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
 import { currencies } from "../utils/currencies"
 
-
 export default function MultiConverter({ dark }) {
   const [amount, setAmount] = useState("")
   const [from, setFrom] = useState("USD")
@@ -16,11 +15,12 @@ export default function MultiConverter({ dark }) {
     setLoading(true)
     setError("")
     try {
-      const res = await axios.post("http://localhost:8000/api/convert-multi", {
-        from_currency: from,
-        to_currency: from,
-        amount: parseFloat(amount)
-      })
+      const token = localStorage.getItem("token")
+      const res = await axios.post(
+        "http://localhost:8000/api/convert-multi",
+        { from_currency: from, to_currency: from, amount: parseFloat(amount) },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       const rates = res.data.rates
       const targets = currencies.filter(c => c.code !== from)
       setResults(targets.map(c => ({

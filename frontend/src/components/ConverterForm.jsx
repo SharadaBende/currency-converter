@@ -19,22 +19,25 @@ export default function ConverterForm({ onConversion, dark }) {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
-    try {
-      const res = await axios.post("http://localhost:8000/api/convert", {
-        ...form,
-        amount: parseFloat(form.amount)
-      })
-      setResult(res.data)
-      onConversion(form.from_currency, form.to_currency)
-    } catch (err) {
-      setError("Conversion failed. Please check your inputs.")
-    } finally {
-      setLoading(false)
-    }
+  e.preventDefault()
+  setLoading(true)
+  setError("")
+  try {
+    const token = localStorage.getItem("token")
+    const res = await axios.post(
+      "http://localhost:8000/api/convert",
+      { ...form, amount: parseFloat(form.amount) },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    setResult(res.data)
+    onConversion(form.from_currency, form.to_currency)
+  } catch (err) {
+    setError("Conversion failed. Please check your inputs.")
+  } finally {
+    setLoading(false)
   }
+}
+  
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-8 w-full">

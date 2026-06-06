@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import axios from "axios"
 
 const AuthContext = createContext()
@@ -7,9 +7,15 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(localStorage.getItem("token") || null)
 
-  if (token) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
-  }
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+      const savedUser = localStorage.getItem("username")
+      if (savedUser) setUser(savedUser)
+    } else {
+      delete axios.defaults.headers.common["Authorization"]
+    }
+  }, [token])
 
   const login = async (username, password) => {
     const formData = new FormData()
@@ -19,9 +25,10 @@ export function AuthProvider({ children }) {
     const res = await axios.post("http://localhost:8000/api/auth/login", formData)
     const accessToken = res.data.access_token
     setToken(accessToken)
-    localStorage.setItem("token", accessToken)
-    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`
     setUser(username)
+    localStorage.setItem("token", accessToken)
+    localStorage.setItem("username", username)
+    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`
   }
 
   const signup = async (username, email, password) => {
@@ -37,6 +44,7 @@ export function AuthProvider({ children }) {
     setToken(null)
     setUser(null)
     localStorage.removeItem("token")
+    localStorage.removeItem("username")
     delete axios.defaults.headers.common["Authorization"]
   }
 

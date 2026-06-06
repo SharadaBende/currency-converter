@@ -33,7 +33,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid username or password")
     
-    token = create_access_token({"sub": user.username})
+    token = create_access_token(data={"sub": user.username})
     return {"access_token": token, "token_type": "bearer"}
 
 # Conversion routes

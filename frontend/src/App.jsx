@@ -1,75 +1,60 @@
 import { useState } from "react"
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom"
 import { AuthProvider, useAuth } from "./context/AuthContext"
-import ConverterForm from "./components/ConverterForm"
-import ConversionHistory from "./components/ConversionHistory"
-import RateChart from "./components/RateChart"
-import MultiConverter from "./components/MultiConverter"
-import Login from "./components/Login"
-import Signup from "./components/Signup"
 import Navbar from "./components/Navbar"
-import Dashboard from "./components/Dashboard"
-import FavoritePairs from "./components/FavoritePairs"
+import BottomNav from "./components/BottomNav"
+import LoginPage from "./pages/LoginPage"
+import SignupPage from "./pages/SignupPage"
+import DashboardPage from "./pages/DashboardPage"
+import ConverterPage from "./pages/ConverterPage"
+import MultiPage from "./pages/MultiPage"
+import FavoritesPage from "./pages/FavoritesPage"
+import HistoryPage from "./pages/HistoryPage"
 
-function MainApp() {
-  const { user, token } = useAuth()
-  const [refresh, setRefresh] = useState(0)
+function ProtectedLayout() {
   const [dark, setDark] = useState(false)
-  const [currencies, setCurrencies] = useState({ from: "USD", to: "INR" })
-  const [showSignup, setShowSignup] = useState(false)
+  const { token } = useAuth()
 
-  const handleConversion = (from, to) => {
-    setRefresh(prev => prev + 1)
-    setCurrencies({ from, to })
-  }
-   
-  const handleSelectPair = (from, to) => {
-  setCurrencies({ from, to })
-}
+  if (!token) return <Navigate to="/login" />
 
   return (
     <div className={dark ? "dark" : ""}>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
         <Navbar dark={dark} setDark={setDark} />
-
-        <div className="pt-24 pb-12 px-4 sm:px-6 max-w-6xl mx-auto">
-          {token ? (
-            <>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <div className="flex flex-col gap-6">
-    <ConverterForm onConversion={handleConversion} dark={dark} />
-    <RateChart from_currency={currencies.from} to_currency={currencies.to} dark={dark} />
-  </div>
-  <div className="flex flex-col gap-6">
-    <Dashboard dark={dark} />
-    <FavoritePairs onSelect={handleSelectPair} dark={dark} />
-    <MultiConverter dark={dark} />
-    <ConversionHistory refresh={refresh} dark={dark} />
-</div>
-</div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center min-h-[80vh]">
-              <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">💱 CurrencyX</h1>
-                <p className="text-gray-500 dark:text-gray-400">Fast, accurate currency conversions</p>
-              </div>
-              {showSignup ? (
-                <Signup onSwitch={() => setShowSignup(false)} />
-              ) : (
-                <Login onSwitch={() => setShowSignup(true)} />
-              )}
-            </div>
-          )}
+        <div className="pt-20 pb-24 px-4 sm:px-6 max-w-2xl mx-auto">
+          <Outlet context={{ dark }} />
         </div>
+        <BottomNav />
       </div>
     </div>
   )
 }
 
+function AuthLayout() {
+  const { token } = useAuth()
+  if (token) return <Navigate to="/dashboard" />
+  return <Outlet />
+}
+
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+          </Route>
+          <Route element={<ProtectedLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/converter" element={<ConverterPage />} />
+            <Route path="/multi" element={<MultiPage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   )
 }
