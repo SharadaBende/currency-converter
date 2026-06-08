@@ -3,6 +3,8 @@ import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
 import { currencies } from "../utils/currencies"
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export default function MultiConverter({ dark }) {
   const [amount, setAmount] = useState("")
   const [from, setFrom] = useState("USD")
@@ -17,7 +19,7 @@ export default function MultiConverter({ dark }) {
     try {
       const token = localStorage.getItem("token")
       const res = await axios.post(
-        "http://localhost:8000/api/convert-multi",
+        `${API_URL}/api/convert-multi`,
         { from_currency: from, to_currency: from, amount: parseFloat(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       )

@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import axios from "axios"
 
+const API_URL = import.meta.env.VITE_API_URL
+
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
@@ -17,7 +19,6 @@ export function AuthProvider({ children }) {
     }
   }, [token])
 
-  // Intercept 401s and silently refresh the access token
   useEffect(() => {
     const interceptor = axios.interceptors.response.use(
       response => response,
@@ -28,7 +29,7 @@ export function AuthProvider({ children }) {
           const refreshToken = localStorage.getItem("refresh_token")
           if (refreshToken) {
             try {
-              const res = await axios.post("http://localhost:8000/api/auth/refresh", {
+              const res = await axios.post(`${API_URL}/api/auth/refresh`, {
                 refresh_token: refreshToken
               })
               const newToken = res.data.access_token
@@ -38,7 +39,6 @@ export function AuthProvider({ children }) {
               originalRequest.headers["Authorization"] = `Bearer ${newToken}`
               return axios(originalRequest)
             } catch {
-              // Refresh token also expired — log out
               logout()
             }
           } else {
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
     formData.append("username", username)
     formData.append("password", password)
 
-    const res = await axios.post("http://localhost:8000/api/auth/login", formData)
+    const res = await axios.post(`${API_URL}/api/auth/login`, formData)
     const { access_token, refresh_token } = res.data
     setToken(access_token)
     setUser(username)
@@ -67,14 +67,14 @@ export function AuthProvider({ children }) {
   }
 
   const signup = async (username, email, password) => {
-    await axios.post("http://localhost:8000/api/auth/signup", { username, email, password })
+    await axios.post(`${API_URL}/api/auth/signup`, { username, email, password })
     await login(username, password)
   }
 
   const logout = () => {
     const refreshToken = localStorage.getItem("refresh_token")
     if (refreshToken) {
-      axios.post("http://localhost:8000/api/auth/logout", { refresh_token: refreshToken }).catch(() => {})
+      axios.post(`${API_URL}/api/auth/logout`, { refresh_token: refreshToken }).catch(() => {})
     }
     setToken(null)
     setUser(null)
