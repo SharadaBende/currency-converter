@@ -98,36 +98,24 @@ def get_history(db: Session = Depends(get_db), current_user: models.User = Depen
         models.ConversionHistory.timestamp.desc()
     ).limit(10).all()
 
-@router.get("/api/insights")
-async def get_insights(current_user=Depends(get_current_user)):
-    try:
-        res = requests.get("https://open.er-api.com/v6/latest/USD")
-        rates = res.json().get("rates", {})
-        snippet = {k: rates[k] for k in ["EUR", "GBP", "JPY", "INR", "AUD", "CAD"] if k in rates}
-
-        prompt = f"""You are a concise FX market analyst. Here are today's USD exchange rates:
-{json.dumps(snippet, indent=2)}
-
-Return ONLY a valid JSON object, no markdown, no extra text:
-{{
-  "insights": [
-    "One sentence insight about a notable rate or trend.",
-    "One sentence insight about another currency pair.",
-    "One sentence broader market observation."
-  ]
-}}"""
-
-        gemini_res = requests.post(
-            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}",
-            json={"contents": [{"parts": [{"text": prompt}]}]}
+@router.get("/insights")
+async def get_insights(current_user: models.User = Depends(get_current_user)):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            "https://open.er-api.com/v6/latest/USD",
+            timeout=30.0
         )
-        gemini_res.raise_for_status()
+    data = response.json()
+    rates = data.get("rates", {})
+    
+    eur = rates.get("EUR", 0)
+    inr = rates.get("INR", 0)
+    jpy = rates.get("JPY", 0)
+    gbp = rates.get("GBP", 0)
 
-        raw = gemini_res.json()["candidates"][0]["content"]["parts"][0]["text"]
-        clean = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-        data = json.loads(clean)
-
-        return data
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    insights = [
+        f"The Euro is trading at {eur:.4f} against the USD, reflecting current Eurozone economic conditions.",
+        f"The Indian Rupee stands at {inr:.2f} per USD, continuing its recent trend against the dollar.",
+        f"The Japanese Yen is at {jpy:.2f} per USD, with the Bank of Japan's policy remaining a key market focus."
+    ]
+    return {"insights": insights}

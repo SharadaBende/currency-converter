@@ -9,21 +9,29 @@ export default function AIInsights({ dark }) {
   const [error, setError] = useState("")
 
   useEffect(() => {
-    const fetchInsights = async () => {
-      try {
-        const token = localStorage.getItem("token")
-        const res = await axios.get(`${API_URL}/api/insights`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        setInsights(res.data.insights)
-      } catch (err) {
-        setError("Could not load insights.")
-      } finally {
-        setLoading(false)
-      }
+  const cached = sessionStorage.getItem("insights")
+  if (cached) {
+    setInsights(JSON.parse(cached))
+    setLoading(false)
+    return
+  }
+
+  const fetchInsights = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await axios.get(`${API_URL}/api/insights`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setInsights(res.data.insights)
+      sessionStorage.setItem("insights", JSON.stringify(res.data.insights))
+    } catch (err) {
+      setError("Could not load insights.")
+    } finally {
+      setLoading(false)
     }
-    fetchInsights()
-  }, [])
+  }
+  fetchInsights() 
+}, [])
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 w-full">
