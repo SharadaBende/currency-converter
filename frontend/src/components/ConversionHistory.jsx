@@ -3,12 +3,16 @@ import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
 import { currencies } from "../utils/currencies"
 
+const API_URL = import.meta.env.VITE_API_URL
 
 export default function ConversionHistory({ refresh, dark }) {
   const [history, setHistory] = useState([])
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/history")
+    const token = localStorage.getItem("token")
+    axios.get(`${API_URL}/api/history`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(res => setHistory(res.data))
       .catch(err => console.error(err))
   }, [refresh])

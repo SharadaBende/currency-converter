@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
 
+const API_URL = import.meta.env.VITE_API_URL
+
 const topCurrencies = [
   { code: "EUR", country: "EU", name: "Euro" },
   { code: "GBP", country: "GB", name: "British Pound" },
@@ -26,11 +28,12 @@ export default function Dashboard({ dark }) {
     const fetchRates = async () => {
       setLoading(true)
       try {
-        const res = await axios.post("http://localhost:8000/api/convert-multi", {
-          from_currency: base,
-          to_currency: base,
-          amount: 1
-        })
+        const token = localStorage.getItem("token")
+        const res = await axios.post(
+          `${API_URL}/api/convert-multi`,
+          { from_currency: base, to_currency: base, amount: 1 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
         setRates(res.data.rates)
       } catch (err) {
         console.error(err)

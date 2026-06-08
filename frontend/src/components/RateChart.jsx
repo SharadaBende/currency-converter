@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export default function RateChart({ from_currency, to_currency, dark }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -12,17 +14,18 @@ export default function RateChart({ from_currency, to_currency, dark }) {
     const fetchRates = async () => {
       setLoading(true)
       try {
+        const token = localStorage.getItem("token")
         const today = new Date()
         const promises = Array.from({ length: 7 }, (_, i) => {
           const date = new Date(today)
           date.setDate(today.getDate() - (6 - i))
           const mm = String(date.getMonth() + 1).padStart(2, "0")
           const dd = String(date.getDate()).padStart(2, "0")
-          return axios.post("http://localhost:8000/api/convert-multi", {
-            from_currency,
-            to_currency,
-            amount: 1
-          }).then(res => ({
+          return axios.post(
+            `${API_URL}/api/convert-multi`,
+            { from_currency, to_currency, amount: 1 },
+            { headers: { Authorization: `Bearer ${token}` } }
+          ).then(res => ({
             date: `${mm}/${dd}`,
             rate: parseFloat((res.data.rates[to_currency] * (0.98 + Math.random() * 0.04)).toFixed(4))
           }))

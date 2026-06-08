@@ -3,6 +3,8 @@ import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
 import { currencies } from "../utils/currencies"
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export default function FavoritePairs({ onSelect, dark }) {
   const [favorites, setFavorites] = useState(
     JSON.parse(localStorage.getItem("favoritePairs") || "[]")
@@ -15,14 +17,15 @@ export default function FavoritePairs({ onSelect, dark }) {
     if (favorites.length === 0) return
     const fetchRates = async () => {
       try {
+        const token = localStorage.getItem("token")
         const uniqueBases = [...new Set(favorites.map(f => f.from))]
         const results = await Promise.all(
           uniqueBases.map(base =>
-            axios.post("http://localhost:8000/api/convert-multi", {
-              from_currency: base,
-              to_currency: base,
-              amount: 1
-            }).then(res => ({ base, rates: res.data.rates }))
+            axios.post(
+              `${API_URL}/api/convert-multi`,
+              { from_currency: base, to_currency: base, amount: 1 },
+              { headers: { Authorization: `Bearer ${token}` } }
+            ).then(res => ({ base, rates: res.data.rates }))
           )
         )
         const rateMap = {}
