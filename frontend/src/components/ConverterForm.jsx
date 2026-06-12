@@ -11,6 +11,7 @@ export default function ConverterForm({ onConversion, dark }) {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [copied, setCopied] = useState(false)
 
   const handleSwap = () => {
     setForm({ ...form, from_currency: form.to_currency, to_currency: form.from_currency })
@@ -113,7 +114,20 @@ export default function ConverterForm({ onConversion, dark }) {
 
       {result && (
         <div className="mt-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 text-white">
-          <p className="text-blue-100 text-xs font-medium uppercase tracking-widest mb-3">Result</p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-blue-100 text-xs font-medium uppercase tracking-widest">Result</p>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(result.converted_amount.toFixed(2))
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2000)
+              }}
+              className="text-xs bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full transition"
+            >
+              {copied ? "✓ Copied!" : "Copy"}
+            </button>
+          </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-4xl font-bold">{result.converted_amount.toFixed(2)}</p>
