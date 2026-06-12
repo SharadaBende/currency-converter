@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
+import CurrencyDropdown from "./CurrencyDropdown"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -46,17 +47,14 @@ export default function Dashboard({ dark }) {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-8 w-full">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 gap-4">
         <div>
           <h2 className="text-xl font-bold text-gray-800 dark:text-white">Live Rates</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">Based on 1 {base}</p>
         </div>
-        <select value={base} onChange={e => setBase(e.target.value)}
-          className="border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 font-medium">
-          {["USD", "EUR", "GBP", "INR", "JPY", "AUD", "CAD", "CHF"].map(c => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
+        <div className="w-36 flex-shrink-0">
+          <CurrencyDropdown value={base} onChange={setBase} />
+        </div>
       </div>
 
       {loading ? (
