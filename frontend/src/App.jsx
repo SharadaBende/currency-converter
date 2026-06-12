@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import Navbar from "./components/Navbar"
 import BottomNav from "./components/BottomNav"
+import SessionExpiredToast from "./components/SessionExpiredToast"
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
 import DashboardPage from "./pages/DashboardPage"
@@ -39,6 +40,7 @@ function AuthLayout() {
 export default function App() {
   return (
     <AuthProvider>
+      <SessionExpiredToast />
       <BrowserRouter>
         <Routes>
           <Route element={<AuthLayout />}>

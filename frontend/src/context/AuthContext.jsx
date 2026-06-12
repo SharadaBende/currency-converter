@@ -8,6 +8,7 @@ const AuthContext = createContext()
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(localStorage.getItem("token") || null)
+  const [sessionExpired, setSessionExpired] = useState(false)
 
   useEffect(() => {
     if (token) {
@@ -39,10 +40,10 @@ export function AuthProvider({ children }) {
               originalRequest.headers["Authorization"] = `Bearer ${newToken}`
               return axios(originalRequest)
             } catch {
-              logout()
+              logout(true)
             }
           } else {
-            logout()
+            logout(true)
           }
         }
         return Promise.reject(error)
@@ -71,7 +72,7 @@ export function AuthProvider({ children }) {
     await login(username, password)
   }
 
-  const logout = () => {
+  const logout = (expired = false) => {
     const refreshToken = localStorage.getItem("refresh_token")
     if (refreshToken) {
       axios.post(`${API_URL}/api/auth/logout`, { refresh_token: refreshToken }).catch(() => {})
@@ -82,10 +83,11 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("refresh_token")
     localStorage.removeItem("username")
     delete axios.defaults.headers.common["Authorization"]
+    if (expired) setSessionExpired(true)
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, token, login, signup, logout, sessionExpired, setSessionExpired }}>
       {children}
     </AuthContext.Provider>
   )
