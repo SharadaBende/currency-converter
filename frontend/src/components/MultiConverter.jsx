@@ -2,6 +2,7 @@ import { useState } from "react"
 import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
 import { currencies } from "../utils/currencies"
+import CurrencyDropdown from "./CurrencyDropdown"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -42,29 +43,36 @@ export default function MultiConverter({ dark }) {
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-8 w-full">
       <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Multi-Currency Converter</h2>
 
-      <div className="flex gap-2 mb-4 w-full overflow-hidden">
-        <input
-          type="number"
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
-          placeholder="0.00"
-          className="flex-1 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 text-lg font-semibold focus:outline-none focus:border-blue-500 transition"
-        />
-        <div className="flex items-center gap-2 border-2 border-gray-200 dark:border-gray-600 rounded-xl px-3 dark:bg-gray-700 min-w-0 flex-shrink-0 max-w-[140px]">
-          <img src={getFlagUrl(currencies.find(c => c.code === from)?.country)}
-            className="w-6 h-4 rounded-sm object-cover" />
-          <select value={from} onChange={e => setFrom(e.target.value)}
-            className="bg-transparent dark:text-white focus:outline-none font-medium py-3">
-            {currencies.map(c => (
-              <option key={c.code} value={c.code}>{c.code}</option>
-            ))}
-          </select>
+      <div className="flex gap-2 mb-4 items-end">
+        <div className="flex-1">
+          <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1.5">Amount</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+            placeholder="0.00"
+            className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 text-lg font-semibold focus:outline-none focus:border-blue-500 transition"
+          />
+        </div>
+        <div className="w-36 flex-shrink-0">
+          <CurrencyDropdown value={from} onChange={setFrom} label="From" />
         </div>
       </div>
 
-      <button onClick={handleConvert} disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold text-lg transition disabled:opacity-50 shadow-lg shadow-blue-200 dark:shadow-none mb-5">
-        {loading ? "Converting..." : "Convert to All →"}
+      <button
+        onClick={handleConvert}
+        disabled={loading}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold text-lg transition disabled:opacity-50 shadow-lg shadow-blue-200 dark:shadow-none mb-5"
+      >
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+            </svg>
+            Converting...
+          </span>
+        ) : "Convert to All →"}
       </button>
 
       {error && (
@@ -79,7 +87,9 @@ export default function MultiConverter({ dark }) {
             <div key={r.to_currency} className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-3 flex flex-col items-center gap-1">
               <img src={getFlagUrl(r.country)} className="w-8 h-5 rounded-sm object-cover" />
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">{r.to_currency}</p>
-              <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{r.converted_amount.toFixed(2)}</p>
+              <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                {r.converted_amount ? r.converted_amount.toFixed(2) : "—"}
+              </p>
             </div>
           ))}
         </div>
