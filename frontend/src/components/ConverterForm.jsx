@@ -119,7 +119,7 @@ export default function ConverterForm({ onConversion, dark }) {
             <button
               type="button"
               onClick={() => {
-                navigator.clipboard.writeText(result.converted_amount.toFixed(2))
+                navigator.clipboard.writeText(`${result.converted_amount.toFixed(2)} ${result.to_currency}`)
                 setCopied(true)
                 setTimeout(() => setCopied(false), 2000)
               }}
