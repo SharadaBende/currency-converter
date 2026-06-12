@@ -1,11 +1,39 @@
-CurrencyX — Full Project Summary
-Tech Stack
+# CurrencyX
 
-Frontend: React + Vite + Tailwind CSS + React Router
-Backend: Python FastAPI + SQLAlchemy + SQLite
-Auth: JWT access tokens + refresh tokens + bcrypt
+A full-stack currency converter web app with authentication, multi-currency conversion, live rate trends, AI-powered market insights, and a personalized dashboard.
 
-Project Structure
+**Live App:** https://currency-converter-kappa-orcin.vercel.app
+**Backend API:** https://currencyx-backend.onrender.com/docs
+
+> Note: the backend is hosted on Render's free tier and may take 30-50 seconds to wake up after periods of inactivity.
+
+## Tech Stack
+
+- **Frontend:** React, Vite, Tailwind CSS, React Router
+- **Backend:** Python, FastAPI, SQLAlchemy, PostgreSQL (production) / SQLite (local)
+- **Auth:** JWT access + refresh tokens, bcrypt password hashing
+- **Deployment:** Render (backend), Vercel (frontend)
+
+## Features
+
+- JWT-based signup and login with bcrypt password hashing
+- Silent auto-refresh of access tokens using long-lived refresh tokens
+- Automatic logout with a session-expired notification when both tokens expire
+- Currency converter supporting 150+ currencies with country flags
+- Searchable currency dropdown across all pages
+- Swap-currencies button and copy-result button
+- Multi-currency converter — convert one amount into all currencies at once
+- 7-day exchange rate trend chart
+- Live rates dashboard with a searchable base currency selector
+- Favorite currency pairs (saved locally)
+- Per-user conversion history
+- AI-powered market insights on the dashboard
+- Dark mode
+- Responsive design with bottom navigation on mobile
+
+## Project Structure
+
+```
 currency-converter/
 ├── backend/
 │   ├── app/
@@ -15,105 +43,93 @@ currency-converter/
 │   │   ├── schemas.py
 │   │   ├── database.py
 │   │   └── auth.py
-│   ├── .env
-│   ├── .gitignore
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── runtime.txt
 └── frontend/
     ├── src/
     │   ├── components/
-    │   │   ├── Navbar.jsx
-    │   │   ├── BottomNav.jsx
-    │   │   ├── ConverterForm.jsx
-    │   │   ├── ConversionHistory.jsx
-    │   │   ├── MultiConverter.jsx
-    │   │   ├── RateChart.jsx
-    │   │   ├── Dashboard.jsx
-    │   │   ├── FavoritePairs.jsx
-    │   │   ├── AIInsights.jsx
-    │   │   ├── CurrencyDropdown.jsx
-    │   │   ├── Login.jsx
-    │   │   └── Signup.jsx
     │   ├── pages/
-    │   │   ├── LoginPage.jsx
-    │   │   ├── SignupPage.jsx
-    │   │   ├── DashboardPage.jsx
-    │   │   ├── ConverterPage.jsx
-    │   │   ├── MultiPage.jsx
-    │   │   ├── FavoritesPage.jsx
-    │   │   └── HistoryPage.jsx
     │   ├── context/
-    │   │   └── AuthContext.jsx
     │   └── utils/
-    │       ├── flags.js
-    │       └── currencies.js
-    ├── .env
-    ├── .gitignore
+    ├── vercel.json
     └── package.json
-Features
+```
 
-✅ JWT login & signup with bcrypt password hashing
-✅ Refresh token system — 30 day, silent auto-refresh in background
-✅ Auto logout when both tokens expire
-✅ Show/hide password toggle on login and signup
-✅ Confirm password field with validation on signup
-✅ Currency converter with 150+ currencies and flags
-✅ Searchable currency dropdown on all pages
-✅ Swap currencies button
-✅ Spinner animation on convert button
-✅ Multi-currency converter — convert to all currencies at once
-✅ 7-day rate trend chart (recharts)
-✅ Live rates dashboard with searchable base currency selector
-✅ Favorite currency pairs saved in localStorage
-✅ Per-user conversion history
-✅ AI market insights on dashboard (Gemini API — swap key to enable)
-✅ Dark mode
-✅ Mobile friendly with bottom navigation
-✅ Multi-page app with React Router
-✅ Environment variables for all secrets and URLs
-✅ Secrets protected with .gitignore
+## API Endpoints
 
-Still To Add (next session)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/signup` | Register a new user |
+| POST | `/api/auth/login` | Log in and receive access/refresh tokens |
+| POST | `/api/auth/refresh` | Get a new access token |
+| POST | `/api/auth/logout` | Revoke the refresh token |
+| POST | `/api/convert` | Convert an amount between two currencies |
+| POST | `/api/convert-multi` | Convert an amount into all currencies |
+| GET | `/api/history` | Get the current user's conversion history |
+| GET | `/api/insights` | Get AI-generated market insights |
 
-📋 Copy result button on converter
-🔔 Session expired toast notification
-📄 README
-🚀 Deploy backend on Render, frontend on Vercel
+## Running Locally
 
-API Endpoints
-POST /api/auth/signup
-POST /api/auth/login
-POST /api/auth/refresh
-POST /api/auth/logout
-POST /api/convert
-POST /api/convert-multi
-GET  /api/history
-GET  /api/insights
-Environment Variables
-# backend/.env
+### Backend
+
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate     # Windows
+# source venv/bin/activate  # macOS/Linux
+
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+The backend runs at `http://localhost:8000`. API docs available at `http://localhost:8000/docs`.
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend runs at `http://localhost:5173`.
+
+## Environment Variables
+
+### backend/.env
+
+```
 SECRET_KEY=your-secret-key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=30
 ALLOWED_ORIGIN=http://localhost:5173
 GEMINI_API_KEY=your-gemini-key
+DATABASE_URL=sqlite:///./currency.db
+```
 
-# frontend/.env
+### frontend/.env
+
+```
 VITE_API_URL=http://localhost:8000
-How to Run
-bash# Backend
-cd backend
-venv\Scripts\activate
-uvicorn app.main:app --reload
+```
 
-# Frontend
-cd frontend
-npm run dev
-Important Notes
+## Deployment Notes
 
-bcrypt must be version 4.0.1
-Dark mode uses Tailwind v4 with @variant dark
-Exchange rate API: https://open.er-api.com/v6/latest/{currency}
-All axios calls pass token via localStorage.getItem("token")
-Delete currency.db and restart after any model changes
-Gemini API key needs a fresh Google account with free quota
+- **Backend (Render):** Deployed as a Python web service. Root directory `backend`, build command `pip install -r requirements.txt`, start command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Uses a hosted PostgreSQL database; CurrencyX tables live in a dedicated `currencyx` schema to avoid collisions with other projects sharing the same database.
+- **Frontend (Vercel):** Deployed with root directory `frontend`, framework preset Vite. Includes a `vercel.json` rewrite rule so client-side routes (e.g. `/login`, `/dashboard`) work correctly on page refresh.
+- Update `ALLOWED_ORIGIN` on the backend whenever the frontend's deployed URL changes, to avoid CORS errors.
 
+## Important Notes
+
+- `bcrypt` must be pinned to version `4.0.1` for compatibility with `passlib`.
+- Dark mode uses Tailwind v4's `@variant dark`.
+- Exchange rates are sourced from `https://open.er-api.com/v6/latest/{currency}`.
+- If backend models change, delete `currency.db` locally and restart the server to regenerate the schema.
+- The Gemini API key requires a Google account with available free quota.
+
+## Roadmap
+
+- [ ] Replace localStorage favorites with per-user persisted favorites
+- [ ] Add unit tests for backend routes
+- [ ] Custom domain for production deployment
