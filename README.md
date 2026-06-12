@@ -1,151 +1,119 @@
-# 💱 Currency Converter - Full Stack Web App
+CurrencyX — Full Project Summary
+Tech Stack
 
-A simple yet powerful full-stack currency converter web application built using **Flask (Python)** for the backend and **HTML, CSS, JavaScript** for the frontend.  
-It uses a real-time exchange rate API to convert currencies instantly.
+Frontend: React + Vite + Tailwind CSS + React Router
+Backend: Python FastAPI + SQLAlchemy + SQLite
+Auth: JWT access tokens + refresh tokens + bcrypt
 
----
-
-## 🚀 Live Features
-
-- 🌍 Real-time currency conversion
-- 🔄 Supports 150+ world currencies
-- 💻 Clean and simple UI
-- ⚡ Fast API-based backend
-- 🔗 Frontend–Backend integration using REST API
-- ❌ Error handling for invalid inputs
-
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-- HTML5
-- CSS3
-- JavaScript (Fetch API)
-
-### Backend
-- Python
-- Flask
-- Flask-CORS
-- Requests library
-
-### API
-- ExchangeRate API (live currency data)
-
----
-
-## 📁 Project Structure
-
+Project Structure
 currency-converter/
-│
 ├── backend/
-│ ├── app.py
-│ ├── requirements.txt
-│
-├── frontend/
-│ ├── index.html
-│ ├── style.css
-│ ├── script.js
-│
-└── README.md
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── routes.py
+│   │   ├── models.py
+│   │   ├── schemas.py
+│   │   ├── database.py
+│   │   └── auth.py
+│   ├── .env
+│   ├── .gitignore
+│   └── requirements.txt
+└── frontend/
+    ├── src/
+    │   ├── components/
+    │   │   ├── Navbar.jsx
+    │   │   ├── BottomNav.jsx
+    │   │   ├── ConverterForm.jsx
+    │   │   ├── ConversionHistory.jsx
+    │   │   ├── MultiConverter.jsx
+    │   │   ├── RateChart.jsx
+    │   │   ├── Dashboard.jsx
+    │   │   ├── FavoritePairs.jsx
+    │   │   ├── AIInsights.jsx
+    │   │   ├── CurrencyDropdown.jsx
+    │   │   ├── Login.jsx
+    │   │   └── Signup.jsx
+    │   ├── pages/
+    │   │   ├── LoginPage.jsx
+    │   │   ├── SignupPage.jsx
+    │   │   ├── DashboardPage.jsx
+    │   │   ├── ConverterPage.jsx
+    │   │   ├── MultiPage.jsx
+    │   │   ├── FavoritesPage.jsx
+    │   │   └── HistoryPage.jsx
+    │   ├── context/
+    │   │   └── AuthContext.jsx
+    │   └── utils/
+    │       ├── flags.js
+    │       └── currencies.js
+    ├── .env
+    ├── .gitignore
+    └── package.json
+Features
 
+✅ JWT login & signup with bcrypt password hashing
+✅ Refresh token system — 30 day, silent auto-refresh in background
+✅ Auto logout when both tokens expire
+✅ Show/hide password toggle on login and signup
+✅ Confirm password field with validation on signup
+✅ Currency converter with 150+ currencies and flags
+✅ Searchable currency dropdown on all pages
+✅ Swap currencies button
+✅ Spinner animation on convert button
+✅ Multi-currency converter — convert to all currencies at once
+✅ 7-day rate trend chart (recharts)
+✅ Live rates dashboard with searchable base currency selector
+✅ Favorite currency pairs saved in localStorage
+✅ Per-user conversion history
+✅ AI market insights on dashboard (Gemini API — swap key to enable)
+✅ Dark mode
+✅ Mobile friendly with bottom navigation
+✅ Multi-page app with React Router
+✅ Environment variables for all secrets and URLs
+✅ Secrets protected with .gitignore
 
+Still To Add (next session)
 
----
+📋 Copy result button on converter
+🔔 Session expired toast notification
+📄 README
+🚀 Deploy backend on Render, frontend on Vercel
 
-## ⚙️ How It Works
+API Endpoints
+POST /api/auth/signup
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/logout
+POST /api/convert
+POST /api/convert-multi
+GET  /api/history
+GET  /api/insights
+Environment Variables
+# backend/.env
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=30
+ALLOWED_ORIGIN=http://localhost:5173
+GEMINI_API_KEY=your-gemini-key
 
-1. User enters:
-   - From currency (e.g., USD)
-   - To currency (e.g., INR)
-   - Amount
-
-2. Frontend sends request to backend:
-```
-
-GET /convert?from=USD&to=INR&amount=10
-
-```
-
-3. Backend:
-- Fetches live exchange rates from API
-- Calculates converted amount
-- Sends response back to frontend
-
-4. Frontend displays the result instantly.
-
----
-
-## ▶️ How to Run Locally
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/currency-converter.git
-
-2. Backend Setup
+# frontend/.env
+VITE_API_URL=http://localhost:8000
+How to Run
+bash# Backend
 cd backend
-python -m venv venv
-venv\Scripts\activate   # Windows
-pip install -r requirements.txt
-python app.py
+venv\Scripts\activate
+uvicorn app.main:app --reload
 
-Backend runs at:
-http://127.0.0.1:5000
-
-
-3. Frontend Setup
-Simply open:
-frontend/index.html
-
-OR run local server:
-
+# Frontend
 cd frontend
-python -m http.server 5500
+npm run dev
+Important Notes
 
-Then open:
-http://localhost:5500
+bcrypt must be version 4.0.1
+Dark mode uses Tailwind v4 with @variant dark
+Exchange rate API: https://open.er-api.com/v6/latest/{currency}
+All axios calls pass token via localStorage.getItem("token")
+Delete currency.db and restart after any model changes
+Gemini API key needs a fresh Google account with free quota
 
-
-🌐 API Endpoint
-Convert Currency
-GET /convert
-Parameters:
-from → source currency (USD)
-to → target currency (INR)
-amount → value to convert
-Example:
-/convert?from=USD&to=INR&amount=10
-Response:
-{
-  "from": "USD",
-  "to": "INR",
-  "amount": 10,
-  "converted": 953.34
-}
-
-
-📌 Future Improvements
-Dropdown auto-complete for currencies
-Currency flags integration
-Dark mode UI
-Deployment on cloud (Render + Netlify)
-Better UI animations
-
-animations
-👨‍💻 Author
-
-Sharada Bende
-Full Stack Developer (Learning Phase 🚀)
-
-⭐ Show Your Support
-
-If you like this project:
-
-⭐ Star the repository
-🍴 Fork it
-📢 Share it
-
-
-📜 License
-
-This project is open-source and free to use for learning purposes.
