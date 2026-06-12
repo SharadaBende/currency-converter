@@ -21,7 +21,7 @@ function ProtectedLayout() {
     <div className={dark ? "dark" : ""}>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
         <Navbar dark={dark} setDark={setDark} />
-        <div className="pt-20 pb-24 px-4 sm:px-6 max-w-2xl lg:max-w-4xl mx-auto">
+        <div className="pt-16 pb-20 px-3 sm:px-6 max-w-2xl lg:max-w-4xl mx-auto">
           <Outlet context={{ dark }} />
         </div>
         <BottomNav />

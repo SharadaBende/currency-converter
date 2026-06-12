@@ -42,7 +42,7 @@ export default function MultiConverter({ dark }) {
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-8 w-full">
       <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Multi-Currency Converter</h2>
 
-      <div className="flex gap-3 mb-4">
+      <div className="flex gap-2 mb-4 w-full overflow-hidden">
         <input
           type="number"
           value={amount}
@@ -50,7 +50,7 @@ export default function MultiConverter({ dark }) {
           placeholder="0.00"
           className="flex-1 border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 text-lg font-semibold focus:outline-none focus:border-blue-500 transition"
         />
-        <div className="flex items-center gap-2 border-2 border-gray-200 dark:border-gray-600 rounded-xl px-3 dark:bg-gray-700">
+        <div className="flex items-center gap-2 border-2 border-gray-200 dark:border-gray-600 rounded-xl px-3 dark:bg-gray-700 min-w-0 flex-shrink-0 max-w-[140px]">
           <img src={getFlagUrl(currencies.find(c => c.code === from)?.country)}
             className="w-6 h-4 rounded-sm object-cover" />
           <select value={from} onChange={e => setFrom(e.target.value)}

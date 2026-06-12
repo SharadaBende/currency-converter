@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import axios from "axios"
 import { getFlagUrl } from "../utils/flags"
@@ -41,6 +40,9 @@ export default function ConverterForm({ onConversion, dark }) {
     }
   }
 
+  const fromCurrency = currencies.find(c => c.code === form.from_currency)
+  const toCurrency = currencies.find(c => c.code === form.to_currency)
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-8 w-full">
       <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Convert Currency</h2>
@@ -72,21 +74,26 @@ export default function ConverterForm({ onConversion, dark }) {
 
             {/* From selector */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 border-2 border-gray-200 dark:border-gray-600 rounded-2xl px-3 py-2.5 dark:bg-gray-700 hover:border-blue-400 transition">
+              <div className="flex items-center gap-2 border-2 border-gray-200 dark:border-gray-600 rounded-2xl px-3 py-2 dark:bg-gray-700 hover:border-blue-400 transition">
                 <img
-                  src={getFlagUrl(currencies.find(c => c.code === form.from_currency)?.country)}
+                  src={getFlagUrl(fromCurrency?.country)}
                   className="w-6 h-4 rounded-sm object-cover flex-shrink-0"
                 />
-                <select
-                  name="from_currency"
-                  value={form.from_currency}
-                  onChange={handleChange}
-                  className="w-full min-w-0 bg-transparent dark:text-white focus:outline-none font-semibold text-gray-800 text-sm cursor-pointer"
-                >
-                  {currencies.map(c => (
-                    <option key={c.code} value={c.code}>{c.code}</option>
-                  ))}
-                </select>
+                <div className="min-w-0 flex-1">
+                  <select
+                    name="from_currency"
+                    value={form.from_currency}
+                    onChange={handleChange}
+                    className="w-full bg-transparent dark:text-white focus:outline-none font-semibold text-gray-800 text-sm cursor-pointer"
+                  >
+                    {currencies.map(c => (
+                      <option key={c.code} value={c.code}>{c.code} — {c.name}</option>
+                    ))}
+                  </select>
+                  <p className="hidden sm:block text-xs text-gray-400 dark:text-gray-500 truncate leading-tight">
+                    {fromCurrency?.name}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -101,21 +108,26 @@ export default function ConverterForm({ onConversion, dark }) {
 
             {/* To selector */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 border-2 border-gray-200 dark:border-gray-600 rounded-2xl px-3 py-2.5 dark:bg-gray-700 hover:border-blue-400 transition">
+              <div className="flex items-center gap-2 border-2 border-gray-200 dark:border-gray-600 rounded-2xl px-3 py-2 dark:bg-gray-700 hover:border-blue-400 transition">
                 <img
-                  src={getFlagUrl(currencies.find(c => c.code === form.to_currency)?.country)}
+                  src={getFlagUrl(toCurrency?.country)}
                   className="w-6 h-4 rounded-sm object-cover flex-shrink-0"
                 />
-                <select
-                  name="to_currency"
-                  value={form.to_currency}
-                  onChange={handleChange}
-                  className="w-full min-w-0 bg-transparent dark:text-white focus:outline-none font-semibold text-gray-800 text-sm cursor-pointer"
-                >
-                  {currencies.map(c => (
-                    <option key={c.code} value={c.code}>{c.code}</option>
-                  ))}
-                </select>
+                <div className="min-w-0 flex-1">
+                  <select
+                    name="to_currency"
+                    value={form.to_currency}
+                    onChange={handleChange}
+                    className="w-full bg-transparent dark:text-white focus:outline-none font-semibold text-gray-800 text-sm cursor-pointer"
+                  >
+                    {currencies.map(c => (
+                      <option key={c.code} value={c.code}>{c.code} — {c.name}</option>
+                    ))}
+                  </select>
+                  <p className="hidden sm:block text-xs text-gray-400 dark:text-gray-500 truncate leading-tight">
+                    {toCurrency?.name}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -151,17 +163,17 @@ export default function ConverterForm({ onConversion, dark }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-4xl font-bold">{result.converted_amount.toFixed(2)}</p>
-              <p className="text-blue-200 text-sm mt-1">{result.to_currency}</p>
+              <p className="text-blue-200 text-sm mt-1">{toCurrency?.name}</p>
             </div>
             <img
-              src={getFlagUrl(currencies.find(c => c.code === result.to_currency)?.country)}
+              src={getFlagUrl(toCurrency?.country)}
               className="w-14 h-10 rounded-lg object-cover shadow-lg"
             />
           </div>
           <div className="mt-4 pt-4 border-t border-blue-400/40 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img
-                src={getFlagUrl(currencies.find(c => c.code === result.from_currency)?.country)}
+                src={getFlagUrl(fromCurrency?.country)}
                 className="w-6 h-4 rounded-sm object-cover"
               />
               <span className="text-blue-100 text-sm">{form.amount} {result.from_currency}</span>
