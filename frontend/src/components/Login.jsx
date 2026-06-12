@@ -8,6 +8,7 @@ export default function Login() {
   const [form, setForm] = useState({ username: "", password: "" })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -35,12 +36,29 @@ export default function Login() {
             placeholder="Enter username" required
             className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition" />
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">Password</label>
-          <input type="password" value={form.password}
-            onChange={e => setForm({ ...form, password: e.target.value })}
-            placeholder="Enter password" required
-            className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition" />
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400">Password</label>
+            <button type="button"
+              className="text-xs text-blue-500 hover:underline"
+              onClick={() => alert("Password reset coming soon!")}>
+              Forgot password?
+            </button>
+          </div>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })}
+              placeholder="Enter password" required
+              className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 transition" />
+            <button type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl">
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
         </div>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}

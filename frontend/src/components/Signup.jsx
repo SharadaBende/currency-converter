@@ -5,12 +5,22 @@ import { useNavigate, Link } from "react-router-dom"
 export default function Signup() {
   const { signup } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ username: "", email: "", password: "" })
+  const [form, setForm] = useState({ username: "", email: "", password: "", confirmPassword: "" })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters")
+      return
+    }
     setLoading(true)
     setError("")
     try {
@@ -35,6 +45,7 @@ export default function Signup() {
             placeholder="Enter username" required
             className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition" />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">Email</label>
           <input type="email" value={form.email}
@@ -42,12 +53,39 @@ export default function Signup() {
             placeholder="Enter email" required
             className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition" />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">Password</label>
-          <input type="password" value={form.password}
-            onChange={e => setForm({ ...form, password: e.target.value })}
-            placeholder="Enter password" required
-            className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 transition" />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })}
+              placeholder="Min 6 characters" required
+              className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 transition" />
+            <button type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl">
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">Confirm Password</label>
+          <div className="relative">
+            <input
+              type={showConfirm ? "text" : "password"}
+              value={form.confirmPassword}
+              onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+              placeholder="Re-enter password" required
+              className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 transition" />
+            <button type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl">
+              {showConfirm ? "🙈" : "👁️"}
+            </button>
+          </div>
         </div>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
