@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
-import CurrencyDropdown from "./CurrencyDropdown"
 import { getFlagUrl } from "../utils/flags"
 import { currencies } from "../utils/currencies"
+import CurrencyDropdown from "./CurrencyDropdown"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -64,11 +64,11 @@ export default function FavoritePairs({ onSelect, dark }) {
       {/* Add pair row */}
       <div className="flex gap-2 items-end mb-4">
         <CurrencyDropdown value={from} onChange={setFrom} label="From" />
-        <span className="text-gray-400 font-bold flex-shrink-0 pb-2.5">→</span>
+        <span className="text-gray-400 font-bold flex-shrink-0 pb-3">→</span>
         <CurrencyDropdown value={to} onChange={setTo} label="To" />
         <button
           onClick={addFavorite}
-          className="flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-2.5 rounded-xl font-bold text-sm transition mb-0"
+          className="flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-2.5 rounded-xl font-bold text-sm transition"
         >
           ⭐
         </button>
