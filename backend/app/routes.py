@@ -98,24 +98,55 @@ def get_history(db: Session = Depends(get_db), current_user: models.User = Depen
         models.ConversionHistory.timestamp.desc()
     ).limit(10).all()
 
+import google.generativeai as genai
+
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+
 @router.get("/insights")
 async def get_insights(current_user: models.User = Depends(get_current_user)):
     async with httpx.AsyncClient() as client:
-        response = await client.get(
-            "https://open.er-api.com/v6/latest/USD",
-            timeout=30.0
-        )
-    data = response.json()
-    rates = data.get("rates", {})
-    
-    eur = rates.get("EUR", 0)
-    inr = rates.get("INR", 0)
-    jpy = rates.get("JPY", 0)
-    gbp = rates.get("GBP", 0)
+        try:
+            response = await client.get(
+                "https://open.er-api.com/v6/latest/USD",
+                timeout=30.0
+            )
+            data = response.json()
+        except (httpx.HTTPError, ValueError):
+            raise HTTPException(status_code=502, detail="Exchange rate service unavailable")
 
-    insights = [
-        f"The Euro is trading at {eur:.4f} against the USD, reflecting current Eurozone economic conditions.",
-        f"The Indian Rupee stands at {inr:.2f} per USD, continuing its recent trend against the dollar.",
-        f"The Japanese Yen is at {jpy:.2f} per USD, with the Bank of Japan's policy remaining a key market focus."
-    ]
+    if data.get("result") != "success":
+        raise HTTPException(status_code=502, detail="Exchange rate service unavailable")
+
+    rates = data.get("rates", {})
+    eur = rates.get("EUR")
+    inr = rates.get("INR")
+    jpy = rates.get("JPY")
+    gbp = rates.get("GBP")
+
+    if not GEMINI_API_KEY:
+        raise HTTPException(status_code=503, detail="AI insights are not configured")
+
+    prompt = f"""You are a financial market commentator. Given today's USD exchange rates:
+- EUR: {eur}
+- INR: {inr}
+- JPY: {jpy}
+- GBP: {gbp}
+
+Write exactly 3 short, factual, one-sentence insights (max 25 words each) about these rates.
+Do not invent specific news events or policy details you cannot verify from the numbers alone.
+Return them as a plain numbered list, nothing else."""
+
+    try:
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        result = model.generate_content(prompt)
+        raw_lines = [
+            line.strip().lstrip("0123456789.-) ").strip()
+            for line in result.text.strip().split("\n")
+            if line.strip()
+        ]
+        insights = raw_lines[:3]
+    except Exception:
+        raise HTTPException(status_code=502, detail="Could not generate insights")
+
     return {"insights": insights}
