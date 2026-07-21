@@ -1,11 +1,15 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # ✅ THIS FIXES THE ISSUE
+CORS(app)
 
-API_KEY = "f1dcaa46be811a540d3516c6"  # 🔴 put your real key here
+API_KEY = os.getenv("EXCHANGE_API_KEY")
 
 
 @app.route("/")
@@ -19,11 +23,9 @@ def convert_currency():
     amount = float(request.args.get("amount"))
 
     url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{from_currency}"
-    
+
     response = requests.get(url)
     data = response.json()
-
-    print(data)  # 👈 ADD THIS LINE
 
     if data["result"] == "success":
         rate = data["conversion_rates"][to_currency]
@@ -43,4 +45,4 @@ def convert_currency():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
